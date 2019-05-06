@@ -5,7 +5,7 @@
 #define TAM_X 3
 #define TAM_Y 3
 
-void gol_init(bool mundo);
+void gol_init(bool mundo[][TAM_Y]);
 void gol_print(bool mundo[TAM_X][TAM_Y]);
 void gol_step(bool mundo1, bool mundo2);
 int gol_count_neighbors(bool mundo, int coordenadaX, int coordenadaY);
@@ -15,55 +15,47 @@ void gol_copy(bool mundo1, bool mundo2);
 int main()
 {
 	int i = 0;
-	int j = 0;
 	// TODO: Declara dos mundos
+	bool mundo1[TAM_X][TAM_Y];
+	bool mundo2;
 
 	// TODO: inicializa el mundo
-	bool mundo1[TAM_X][TAM_Y] = {
-		{0, 1, 0},
-		{0, 1, 0},
-		{0, 1, 0},
-	};
-
-	bool mundo2[TAM_X][TAM_Y];
+	gol_init(mundo1);
 
 	do {
 		printf("\033cIteration %d\n", i++);
+		
 		// TODO: Imprime el mundo
-
 		gol_print(mundo1);
 
-		// for ( int i = 0; i < TAM_X; i++ ) {
-		// 	for ( int j = 0; j < TAM_Y; j++ ) {
-		// 		gol_print(mundo1[i][j]);
-		// 	}
-		// 	printf("\n");
-		// }
 		// TODO: Itera
 		
 	} while (getchar() != 'q');
 
-	gol_init(mundo1);
-
 	return EXIT_SUCCESS;
 }
 
-void gol_init(bool mundo)
+void gol_init(bool mundo[][TAM_Y])
 {
 	// TODO: Poner el mundo a false
-	mundo = false;
+	for ( int i = 0; i < TAM_Y; i++) {
+		for ( int j = 0; i < TAM_Y; i++) {
+			mundo[i][j] = false;
+		}
+	}
+
 	/* TODO: Inicializar con el patrón del glider:
 	 *           . # .
 	 *           . . #
 	 *           # # #
 	 */
 
-	printf("%d\n", mundo);
-	// mundo[TAM_X][TAM_Y] = {
-	// 	{ 0, 1, 0},
-	// 	{ 0, 0, 1},
-	// 	{ 1, 1, 1},
-	// };
+	mundo[0][1] = true;
+	mundo[1][2] = true;
+	mundo[2][0] = true;
+	mundo[2][1] = true;
+	mundo[2][1] = true;
+
 }
 
 void gol_print(bool mundo[TAM_X][TAM_Y])
