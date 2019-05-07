@@ -7,9 +7,9 @@
 
 void gol_init(bool mundo[][TAM_Y]);
 void gol_print(bool mundo[TAM_X][TAM_Y]);
-void gol_step(bool mundo1, bool mundo2);
-int gol_count_neighbors(bool mundo, int coordenadaX, int coordenadaY);
-bool gol_get_cell(bool mundo, int coordenadaX, int coordenadaY);
+void gol_step(bool mundo1[][TAM_Y], bool mundo2[][TAM_Y]);
+int gol_count_neighbors(bool mundo[][TAM_Y], const int coords[][2]);
+bool gol_get_cell(bool mundo[][TAM_Y], int x, int y);
 void gol_copy(bool mundo1, bool mundo2);
 
 int main()
@@ -17,7 +17,7 @@ int main()
 	int i = 0;
 	// TODO: Declara dos mundos
 	bool mundo1[TAM_X][TAM_Y];
-	bool mundo2;
+	bool mundo2[TAM_X][TAM_Y];
 
 	// TODO: inicializa el mundo
 	gol_init(mundo1);
@@ -28,8 +28,10 @@ int main()
 		// TODO: Imprime el mundo
 		gol_print(mundo1);
 
+		printf("\n\n");
 		// TODO: Itera
-		
+		gol_step(mundo1, mundo2);
+
 	} while (getchar() != 'q');
 
 	return EXIT_SUCCESS;
@@ -54,7 +56,7 @@ void gol_init(bool mundo[][TAM_Y])
 	mundo[1][2] = true;
 	mundo[2][0] = true;
 	mundo[2][1] = true;
-	mundo[2][1] = true;
+	mundo[2][2] = true;
 
 }
 
@@ -82,7 +84,7 @@ void gol_print(bool mundo[TAM_X][TAM_Y])
 	}
 }
 
-void gol_step(bool mundo1, bool mundo2)
+void gol_step(bool mundo1[][TAM_Y], bool mundo2[][TAM_Y])
 {
 	/*
 	 * TODO:
@@ -94,19 +96,55 @@ void gol_step(bool mundo1, bool mundo2)
 	 *
 	 * - Copiar el mundo auxiliar sobre el mundo principal
 	 */
+
+	// const int coords[8][2] = {
+	// 	{-1, -1}, {0, -1}, {1, -1},
+	// 	{-1,  0},          {1,  0},
+	// 	{-1,  1}, {0,  1}, {1,  1}
+	// };
+
+	const int coords[8][2] = {
+		{0, 0}, {0, 1}, {0, 2},
+		{1, 0},          {1, 2},
+		{2, 0}, {2, 1}, {2, 2}
+	};
+
+	int count = 0;
+
+	count = gol_count_neighbors(mundo1, coords);
+
+	printf("count es %d\n", count);
 }
 
-int gol_count_neighbors(bool mundo, int coordenadaX, int coordenadaY)
+int gol_count_neighbors(bool mundo[][TAM_Y], const int coords[][2])
 {
 	// Devuelve el número de vecinos
+	int count = 0;
+	int x = 0;
+	int y = 0;
+
+	for ( int i = 0; i < 8; i++ ) {
+		count += gol_get_cell(mundo,
+			x + coords[i][0],
+			y + coords[i][1]
+		);
+	}
+
+	return count;
 }
 
-bool gol_get_cell(bool mundo, int coordenadaX, int coordenadaY)
+bool gol_get_cell(bool mundo[][TAM_Y], int x, int y)
 {
 	/*
 	 * TODO: Devuelve el estado de la célula de posición indicada
 	 * (¡cuidado con los límites del array!)
 	 */
+
+	printf("mundo es %d\n", mundo[x][y]);
+	// printf("x es %d\n", x);
+	// printf("y es %d\n", y);
+
+	return mundo[x][y];
 }
 
 void gol_copy(bool mundo1, bool mundo2)
