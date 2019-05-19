@@ -103,7 +103,7 @@ void gol_step(bool mundo1[][TAM_Y], bool mundo2[][TAM_Y])
         for (int j = 0; j < TAM_Y; j++ ) {
 			count = gol_count_neighbors(mundo1, i, j);
 
-			if (mundo1, i, j) {
+			if (mundo1[i][j]) {
 				// caso de celula que sigue viva
 				mundo2[i][j] = (count == 3) || (count == 2);
 			} else {
