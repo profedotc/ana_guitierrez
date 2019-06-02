@@ -8,4 +8,5 @@ gol.o: gol.h gol.c
 	gcc -c gol.c
 run: exec
 	./exec
-clean: rm main.o gol.o exec
+clean: clean
+	rm main.o gol.o exec
