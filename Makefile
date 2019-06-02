@@ -1,8 +1,11 @@
-all: main.o gol.o
+.PHONY: all clean run
+all: exec
+exec: main.o gol.o
 	gcc main.o gol.o -o exec
-main: main.c
+main.o: main.c
 	gcc -c main.c
-gol: gol.h gol.c
+gol.o: gol.h gol.c
 	gcc -c gol.c
-clean: exec
-	rm main.o gol.o exec
+run: exec
+	./exec
+clean: rm main.o gol.o exec

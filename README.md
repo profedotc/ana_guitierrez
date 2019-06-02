@@ -25,3 +25,7 @@ a continuación, ejecutar con:
 ```
 ./exec
 ```
+o con
+```
+make run
+```
