@@ -2,52 +2,56 @@
 #include <stdbool.h>
 #include "gol.h"
 
-void gol_init(bool mundo[][TAM_Y])
+void gol_init(struct gol *g)
 {
 	for ( int i = 0; i < TAM_Y; i++) {
 		for ( int j = 0; i < TAM_Y; i++) {
-			mundo[i][j] = false;
+      		g->worlds[0][i][j] = false;
 		}
 	}
 
-	mundo[0][1] = true;
-	mundo[0][2] = false;
-	mundo[1][2] = true;
-	mundo[2][0] = true;
-	mundo[2][1] = true;
-	mundo[2][2] = true;
+	g->worlds[0][0][1] = true;
+	g->worlds[0][0][2] = false;
+	g->worlds[0][1][2] = true;
+	g->worlds[0][2][0] = true;
+	g->worlds[0][2][1] = true;
+	g->worlds[0][2][2] = true;
+	g->current_world = 0;
 
 }
 
-void gol_print(bool mundo[][TAM_Y])
+void gol_print(struct gol *g)
 {
 	for ( int i = 0; i < TAM_X; i++ ) {
 		for ( int j = 0; j < TAM_Y; j++ ) {
-			printf("%c ", mundo[i][j] ? '#' : '.');
+			printf("%c ", g->worlds[g->current_world][i][j] ? '#' : '.');
 		}
 		printf("\n");
 	}
 }
 
-void gol_step(bool mundo1[][TAM_Y], bool mundo2[][TAM_Y])
+void gol_step(struct gol *g)
 {
 	int count = 0;
+	bool shift_world = !g->current_world;
 
 	for (int i = 0; i < TAM_X; i++ ) {
         for (int j = 0; j < TAM_Y; j++ ) {
-			count = gol_count_neighbors(mundo1, i, j);
+			count = gol_count_neighbors(g, i, j);
 
-			if (mundo1[i][j]) {
-				mundo2[i][j] = (count == 3) || (count == 2);
+			if (g->worlds[g->current_world][i][j]) {
+				g->worlds[shift_world][i][j] = (count == 3) || (count == 2);
 			} else {
-				mundo2[i][j] = count == 3;
+				g->worlds[shift_world][i][j] = count == 3;
 			}
 
 		}
 	}
+	g->current_world = !g->current_world;
+
 }
 
-int gol_count_neighbors(bool mundo[][TAM_Y], int x, int y)
+int gol_count_neighbors(struct gol *g, int x, int y)
 {
 	int count = 0;
 	const int coords[8][2] = {
@@ -57,18 +61,18 @@ int gol_count_neighbors(bool mundo[][TAM_Y], int x, int y)
 	};
 
 	for ( int i = 0; i < 8; i++ ) {
-		count += gol_get_cell(mundo, x + coords[i][0], y + coords[i][1]);
+		count += gol_get_cell(g, x + coords[i][0], y + coords[i][1]);
 	}
 
 	return count;
 
 }
 
-bool gol_get_cell(bool mundo[][TAM_Y], int x, int y)
+bool gol_get_cell(struct gol *g, int x, int y)
 {
 
 	if((0 <= x) && (0 <= y) && (x < TAM_X) && (y < TAM_Y)) {
-		return mundo[x][y];
+		return g->worlds[g->current_world][x][y];
 	} else {
 		return 0;
 	}
