@@ -13,7 +13,5 @@ struct gol
 void gol_init(struct gol *g);
 void gol_print(struct gol *g);
 void gol_step(struct gol *g);
-int gol_count_neighbors(struct gol *g, int x, int y);
-bool gol_get_cell(struct gol *g, int x, int y);
 
 #endif

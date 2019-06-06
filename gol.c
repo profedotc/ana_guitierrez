@@ -2,6 +2,9 @@
 #include <stdbool.h>
 #include "gol.h"
 
+static int count_neighbors(struct gol *g, int x, int y);
+static bool get_cell(struct gol *g, int x, int y);
+
 void gol_init(struct gol *g)
 {
 	for ( int i = 0; i < TAM_Y; i++) {
@@ -37,7 +40,7 @@ void gol_step(struct gol *g)
 
 	for (int i = 0; i < TAM_X; i++ ) {
         for (int j = 0; j < TAM_Y; j++ ) {
-			count = gol_count_neighbors(g, i, j);
+			count = count_neighbors(g, i, j);
 
 			if (g->worlds[g->current_world][i][j]) {
 				g->worlds[shift_world][i][j] = (count == 3) || (count == 2);
@@ -51,7 +54,7 @@ void gol_step(struct gol *g)
 
 }
 
-int gol_count_neighbors(struct gol *g, int x, int y)
+int count_neighbors(struct gol *g, int x, int y)
 {
 	int count = 0;
 	const int coords[8][2] = {
@@ -61,14 +64,14 @@ int gol_count_neighbors(struct gol *g, int x, int y)
 	};
 
 	for ( int i = 0; i < 8; i++ ) {
-		count += gol_get_cell(g, x + coords[i][0], y + coords[i][1]);
+		count += get_cell(g, x + coords[i][0], y + coords[i][1]);
 	}
 
 	return count;
 
 }
 
-bool gol_get_cell(struct gol *g, int x, int y)
+bool get_cell(struct gol *g, int x, int y)
 {
 
 	if((0 <= x) && (0 <= y) && (x < TAM_X) && (y < TAM_Y)) {
