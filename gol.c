@@ -5,6 +5,7 @@
 
 static int count_neighbors(struct gol *g, int x, int y);
 static bool get_cell(struct gol *g, int x, int y);
+static void set_cell(struct gol *g, int x, int y, bool b);
 
 enum world {
 	current = 0, 
@@ -14,47 +15,33 @@ enum world {
 
 bool gol_alloc(struct gol *g, int x, int y) {
 	
-	g->worlds[current] = (bool **)malloc(x * sizeof(bool *));
-	g->worlds[other] = (bool **)malloc(x * sizeof(bool *));
+	g->worlds[current] = (bool *)malloc(x * y * sizeof(bool));
+	g->worlds[other] = (bool *)malloc(x * y * sizeof(bool));
 	if (!g->worlds[current] || !g->worlds[other]) {
 		return 0;
-	}
-
-	for (int i = 0; i < y; i++) {
-		g->worlds[current][i] = (bool *)malloc(y * sizeof(bool));
-		g->worlds[other][i] = (bool *)malloc(y * sizeof(bool));
-		if (!g->worlds[current][i] || !g->worlds[other][i]) {
-			return 0;
-		}
 	}
 
 	return 1;
 }
 
-void gol_free(struct gol *g, int x)
+void gol_free(struct gol *g)
 {
-	for (int i = 0; i < x; i++) {
-		free(g->worlds[current][i]);
-		free(g->worlds[other][i]);
-	}
 	free(g->worlds[current]);
-	free(g->worlds[other]);
 }
 
 void gol_init(struct gol *g)
 {
-	for ( int i = 0; i < TAM_X; i++) {
-		for ( int j = 0; j < TAM_Y; j++) {
-      		g->worlds[current][i][j] = false;
-		}
-	}
+	for ( int i = 0; i < TAM_X; i++)
+		for ( int j = 0; j < TAM_Y; j++)
+			*( g->worlds[current] + i * TAM_Y + j ) = false;
 
-	g->worlds[current][0][1] = true;
-	g->worlds[current][0][2] = false;
-	g->worlds[current][1][2] = true;
-	g->worlds[current][2][0] = true;
-	g->worlds[current][2][1] = true;
-	g->worlds[current][2][2] = true;
+
+	set_cell(g, 0, 1, true);
+	set_cell(g, 0, 2, false);
+	set_cell(g, 1, 2, true);
+	set_cell(g, 2, 0, true);
+	set_cell(g, 2, 1, true);
+	set_cell(g, 2, 2, true);
 
 }
 
@@ -62,7 +49,7 @@ void gol_print(struct gol *g)
 {
 	for ( int i = 0; i < TAM_X; i++ ) {
 		for ( int j = 0; j < TAM_Y; j++ ) {
-			printf("%c ", g->worlds[current][i][j] ? '#' : '.');
+			printf("%c ", get_cell(g, i, j) ? '#' : '.');
 		}
 		printf("\n");
 	}
@@ -76,10 +63,12 @@ void gol_step(struct gol *g)
         for (int j = 0; j < TAM_Y; j++ ) {
 			count = count_neighbors(g, i, j);
 
-			if (g->worlds[current][i][j]) {
-				g->worlds[other][i][j] = (count == 3) || (count == 2);
+			if (get_cell(g, i, j)) {
+				bool b = (count == 3) || (count == 2);
+				set_cell(g, i, j, b);
 			} else {
-				g->worlds[other][i][j] = count == 3;
+				bool b = count == 3;
+				set_cell(g, i, j, b);
 			}
 
 		}
@@ -110,8 +99,13 @@ bool get_cell(struct gol *g, int x, int y)
 {
 
 	if((0 <= x) && (0 <= y) && (x < TAM_X) && (y < TAM_Y)) {
-		return g->worlds[current][x][y];
+		return *( g->worlds[current] + x * TAM_Y + y );
 	} else {
 		return 0;
 	}
+}
+
+void set_cell(struct gol *g, int x, int y, bool b)
+{
+	*( g->worlds[current] + x * TAM_Y + y ) = b;
 }

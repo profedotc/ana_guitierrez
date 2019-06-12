@@ -27,7 +27,7 @@ int main()
 
 	} while (getchar() != 'q');
 
-	gol_free(&g, TAM_X);
+	gol_free(&g);
 
 	return EXIT_SUCCESS;
 }
