@@ -4,6 +4,8 @@
 #define TAM_X 3
 #define TAM_Y 3
 
+#define GET_CELL(g, x, y) (*( g->worlds[current] + x * TAM_Y + y ))
+
 struct gol
 {
   bool *worlds[2];

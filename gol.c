@@ -99,7 +99,7 @@ bool get_cell(struct gol *g, int x, int y)
 {
 
 	if((0 <= x) && (0 <= y) && (x < TAM_X) && (y < TAM_Y)) {
-		return *( g->worlds[current] + x * TAM_Y + y );
+		return GET_CELL(g, x, y);
 	} else {
 		return 0;
 	}
@@ -107,5 +107,5 @@ bool get_cell(struct gol *g, int x, int y)
 
 void set_cell(struct gol *g, int x, int y, bool b)
 {
-	*( g->worlds[current] + x * TAM_Y + y ) = b;
+	GET_CELL(g, x, y) = b;
 }
