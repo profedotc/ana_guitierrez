@@ -13,14 +13,15 @@ enum world {
 	};
 
 
-bool gol_alloc(struct gol *g, int x, int y) {
+bool gol_alloc(struct gol *g, int size_x, int size_y) {
 	
-	g->worlds[current] = (bool *)malloc(x * y * sizeof(bool));
-	g->worlds[other] = (bool *)malloc(x * y * sizeof(bool));
-	if (!g->worlds[current] || !g->worlds[other]) {
+	g->mem = (bool *)malloc(2 * size_x * size_y * sizeof(bool));
+	if (!g->mem) {
 		return 0;
 	}
 
+	g->worlds[current] = g->mem;
+	g->worlds[other] = g->mem + size_x * size_y * sizeof(bool);
 	return 1;
 }
 
