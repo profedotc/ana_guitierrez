@@ -17,7 +17,7 @@ bool gol_alloc(struct gol *g, int x, int y) {
 		return 0;
 	}
 
-	for (int i = 0; i < g->size_x; i++) {
+	for (int i = 0; i < x; i++) {
 		g->worlds[CURRENT][i] = (bool *)malloc(y * sizeof(bool));
 		g->worlds[OTHER][i] = (bool *)malloc(y * sizeof(bool));
 		if (!g->worlds[CURRENT][i] || !g->worlds[OTHER][i]) {
@@ -35,8 +35,10 @@ void gol_free(struct gol *g)
 {
 	for (int i = 0; i < g->size_x; i++) {
 		free(g->worlds[CURRENT][i]);
+		free(g->worlds[OTHER][i]);
 	}
 	free(g->worlds[CURRENT]);
+	free(g->worlds[OTHER]);
 }
 
 void gol_init(struct gol *g)
