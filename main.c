@@ -8,9 +8,7 @@ int main()
 	int i = 0;
 	struct gol g;
 
-	gol_alloc(&g, TAM_X, TAM_Y);
-
-	if (!gol_alloc(&g, TAM_X, TAM_Y)) {
+	if (!gol_alloc(&g, 10, 15)) {
 		printf("No se pudo reservar memoria para mundo\n");
 		return EXIT_FAILURE;
     }

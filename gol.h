@@ -1,12 +1,11 @@
 #ifndef _GOL_H_
 #define _GOL_H_
 
-#define TAM_X 3
-#define TAM_Y 3
-
 struct gol
 {
-  bool *worlds[2];
+  bool **worlds[2];
+  int size_x;
+  int size_y;
 };
 
 void gol_init(struct gol *g);
