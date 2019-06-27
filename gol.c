@@ -3,17 +3,16 @@
 #include <stdbool.h>
 #include "gol.h"
 
-static int count_neighbors(struct gol *g, int x, int y);
-static bool get_cell(struct gol *g, int x, int y);
-static void set_cell(struct gol *g, int x, int y, bool b);
-
 enum world { CURRENT, OTHER };
 
+static int count_neighbors(struct gol *g, int x, int y);
+static bool get_cell(struct gol *g, int x, int y);
+static void set_cell(struct gol *g, enum world w, int x, int y, bool b);
 
 bool gol_alloc(struct gol *g, int x, int y) {
 	
-	g->worlds[CURRENT] = (bool **)malloc(x * y * sizeof(bool *));
-	g->worlds[OTHER] = (bool **)malloc(x * y * sizeof(bool *));
+	g->worlds[CURRENT] = (bool *)malloc(x * y * sizeof(bool));
+	g->worlds[OTHER] = (bool *)malloc(x * y * sizeof(bool));
 	if (!g->worlds[CURRENT] || !g->worlds[OTHER]) {
 		return 0;
 	}
@@ -34,16 +33,16 @@ void gol_init(struct gol *g)
 {
 	for ( int i = 0; i < g->size_x; i++) {
 		for ( int j = 0; j < g->size_y; j++) {
-      		*(g->worlds[CURRENT] + i * g->size_y + j)  = false;
+			  set_cell(g, CURRENT, i, j, 0);
 		}
 	}
 
-	set_cell(g, 0, 1, true);
-	set_cell(g, 0, 2, false);
-	set_cell(g, 1, 2, true);
-	set_cell(g, 2, 0, true);
-	set_cell(g, 2, 1, true);
-	set_cell(g, 2, 2, true);
+	set_cell(g, CURRENT, 0, 1, true);
+	set_cell(g, CURRENT, 0, 2, false);
+	set_cell(g, CURRENT, 1, 2, true);
+	set_cell(g, CURRENT, 2, 0, true);
+	set_cell(g, CURRENT, 2, 1, true);
+	set_cell(g, CURRENT, 2, 2, true);
 
 }
 
@@ -68,16 +67,16 @@ void gol_step(struct gol *g)
 
 			if (get_cell(g, i, j)) {
 				b = (count == 3) || (count == 2);
-				set_cell(g, i, j, b);
+				set_cell(g, OTHER, i, j, b);
 			} else {
 				b = count == 3;
-				set_cell(g, i, j, b);
+				set_cell(g, OTHER, i, j, b);
 			}
 
 		}
 	}
 
-	bool **swap;
+	bool *swap;
 	swap = g->worlds[CURRENT];
 	g->worlds[CURRENT] = g->worlds[OTHER];
 	g->worlds[OTHER] = swap;
@@ -110,8 +109,7 @@ bool get_cell(struct gol *g, int x, int y)
 		return 0;
 	}
 }
-void set_cell(struct gol *g, int x, int y, bool b)
+void set_cell(struct gol *g, enum world w, int x, int y, bool b)
 {
-	bool *pb = (bool *) b;
-	*( g->worlds[CURRENT] + x * g->size_y + y ) = pb;
+	g->worlds[w][x * g->size_y + y] = b;
 }
