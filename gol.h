@@ -5,6 +5,7 @@
 
 struct gol
 {
+  bool *mem;
   bool *worlds[2];
   int size_x;
   int size_y;

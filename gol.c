@@ -9,24 +9,23 @@ static int count_neighbors(struct gol *g, int x, int y);
 static bool get_cell(struct gol *g, enum world w, int x, int y);
 static void set_cell(struct gol *g, enum world w, int x, int y, bool b);
 
-bool gol_alloc(struct gol *g, int x, int y) {
+bool gol_alloc(struct gol *g, int size_x, int size_y) {
 	
-	g->worlds[CURRENT] = (bool *)malloc(x * y * sizeof(bool));
-	g->worlds[OTHER] = (bool *)malloc(x * y * sizeof(bool));
-	if (!g->worlds[CURRENT] || !g->worlds[OTHER]) {
+	g->mem = (bool *)malloc(2 * size_x * size_y * sizeof(bool));
+	if (!g->mem) {
 		return 0;
 	}
 
-	g->size_x = x;
-	g->size_y = y;
-
+	g->size_x = size_x;
+	g->size_y = size_y;
+	g->worlds[CURRENT] = g->mem;
+	g->worlds[OTHER] = g->mem + size_x * size_y;
 	return 1;
 }
 
 void gol_free(struct gol *g)
 {
-	free(g->worlds[CURRENT]);
-	free(g->worlds[OTHER]);
+	free(g->mem);
 }
 
 void gol_init(struct gol *g)
