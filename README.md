@@ -29,3 +29,10 @@ o con
 ```
 make run
 ```
+
+#Tests
+
+Para realizar un test de memoria con valgrind, ejecutar:
+```
+make test
+```

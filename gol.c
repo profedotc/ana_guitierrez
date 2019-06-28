@@ -3,26 +3,18 @@
 #include <stdbool.h>
 #include "gol.h"
 
-static int count_neighbors(struct gol *g, int x, int y);
-static bool get_cell(struct gol *g, int x, int y);
-
 enum world { CURRENT, OTHER };
 
+static int count_neighbors(struct gol *g, int x, int y);
+static bool get_cell(struct gol *g, int x, int y);
+static void set_cell(struct gol *g, enum world w, int x, int y, bool b);
 
 bool gol_alloc(struct gol *g, int x, int y) {
 	
-	g->worlds[CURRENT] = (bool **)malloc(x * sizeof(bool *));
-	g->worlds[OTHER] = (bool **)malloc(x * sizeof(bool *));
+	g->worlds[CURRENT] = (bool *)malloc(x * y * sizeof(bool));
+	g->worlds[OTHER] = (bool *)malloc(x * y * sizeof(bool));
 	if (!g->worlds[CURRENT] || !g->worlds[OTHER]) {
 		return 0;
-	}
-
-	for (int i = 0; i < x; i++) {
-		g->worlds[CURRENT][i] = (bool *)malloc(y * sizeof(bool));
-		g->worlds[OTHER][i] = (bool *)malloc(y * sizeof(bool));
-		if (!g->worlds[CURRENT][i] || !g->worlds[OTHER][i]) {
-			return 0;
-		}
 	}
 
 	g->size_x = x;
@@ -33,10 +25,6 @@ bool gol_alloc(struct gol *g, int x, int y) {
 
 void gol_free(struct gol *g)
 {
-	for (int i = 0; i < g->size_x; i++) {
-		free(g->worlds[CURRENT][i]);
-		free(g->worlds[OTHER][i]);
-	}
 	free(g->worlds[CURRENT]);
 	free(g->worlds[OTHER]);
 }
@@ -45,16 +33,16 @@ void gol_init(struct gol *g)
 {
 	for ( int i = 0; i < g->size_x; i++) {
 		for ( int j = 0; j < g->size_y; j++) {
-      		g->worlds[CURRENT][i][j] = false;
+			  set_cell(g, CURRENT, i, j, 0);
 		}
 	}
 
-	g->worlds[CURRENT][0][1] = true;
-	g->worlds[CURRENT][0][2] = false;
-	g->worlds[CURRENT][1][2] = true;
-	g->worlds[CURRENT][2][0] = true;
-	g->worlds[CURRENT][2][1] = true;
-	g->worlds[CURRENT][2][2] = true;
+	set_cell(g, CURRENT, 0, 1, true);
+	set_cell(g, CURRENT, 0, 2, false);
+	set_cell(g, CURRENT, 1, 2, true);
+	set_cell(g, CURRENT, 2, 0, true);
+	set_cell(g, CURRENT, 2, 1, true);
+	set_cell(g, CURRENT, 2, 2, true);
 
 }
 
@@ -62,7 +50,7 @@ void gol_print(struct gol *g)
 {
 	for ( int i = 0; i < g->size_x; i++ ) {
 		for ( int j = 0; j < g->size_y; j++ ) {
-			printf("%c ", g->worlds[CURRENT][i][j] ? '#' : '.');
+			printf("%c ", get_cell(g, i, j) ? '#' : '.');
 		}
 		printf("\n");
 	}
@@ -71,21 +59,24 @@ void gol_print(struct gol *g)
 void gol_step(struct gol *g)
 {
 	int count = 0;
+	bool b;
 
 	for (int i = 0; i < g->size_x; i++ ) {
         for (int j = 0; j < g->size_y; j++ ) {
 			count = count_neighbors(g, i, j);
 
-			if (g->worlds[CURRENT][i][j]) {
-				g->worlds[OTHER][i][j] = (count == 3) || (count == 2);
+			if (get_cell(g, i, j)) {
+				b = (count == 3) || (count == 2);
+				set_cell(g, OTHER, i, j, b);
 			} else {
-				g->worlds[OTHER][i][j] = count == 3;
+				b = count == 3;
+				set_cell(g, OTHER, i, j, b);
 			}
 
 		}
 	}
 
-	bool **swap;
+	bool *swap;
 	swap = g->worlds[CURRENT];
 	g->worlds[CURRENT] = g->worlds[OTHER];
 	g->worlds[OTHER] = swap;
@@ -113,8 +104,12 @@ bool get_cell(struct gol *g, int x, int y)
 {
 
 	if((0 <= x) && (0 <= y) && (x < g->size_x) && (y < g->size_y)) {
-		return g->worlds[CURRENT][x][y];
+		return *( g->worlds[CURRENT] + x * g->size_y + y );
 	} else {
 		return 0;
 	}
+}
+void set_cell(struct gol *g, enum world w, int x, int y, bool b)
+{
+	g->worlds[w][x * g->size_y + y] = b;
 }
