@@ -8,9 +8,7 @@ int main()
 	int i = 0;
 	struct gol g;
 
-	gol_alloc(&g, TAM_X, TAM_Y);
-
-	if (!gol_alloc(&g, TAM_X, TAM_Y)) {
+	if (!gol_alloc(&g, 10, 15)) {
 		printf("No se pudo reservar memoria para mundo\n");
 		return EXIT_FAILURE;
     }
@@ -18,12 +16,10 @@ int main()
 	gol_init(&g);
 
 	for (int i = 0; i < 10; i++) {
-		printf("\033cIteration %d\n\n", i++);
-
 		gol_step(&g);
 	}
 
-	gol_free(&g, TAM_X);
+	gol_free(&g);
 
 	return EXIT_SUCCESS;
 }
