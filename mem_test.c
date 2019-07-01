@@ -9,14 +9,13 @@ int main()
 	struct gol g;
 
 	if (!gol_alloc(&g, 10, 15)) {
-
+		printf("No se pudo reservar memoria para mundo\n");
 		return EXIT_FAILURE;
-    }
+  }
 
 	gol_init(&g);
 
 	for (int i = 0; i < 10; i++) {
-
 		gol_step(&g);
 	}
 

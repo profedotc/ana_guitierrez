@@ -1,8 +1,11 @@
 #ifndef _GOL_H_
 #define _GOL_H_
 
+#define GET_CELL(g, x, y) ( g->worlds[w][x * g->size_y + y] )
+
 struct gol
 {
+  bool *mem;
   bool *worlds[2];
   int size_x;
   int size_y;

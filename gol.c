@@ -6,27 +6,26 @@
 enum world { CURRENT, OTHER };
 
 static int count_neighbors(struct gol *g, int x, int y);
-static bool get_cell(struct gol *g, int x, int y);
+static bool get_cell(struct gol *g, enum world w, int x, int y);
 static void set_cell(struct gol *g, enum world w, int x, int y, bool b);
 
-bool gol_alloc(struct gol *g, int x, int y) {
+bool gol_alloc(struct gol *g, int size_x, int size_y) {
 	
-	g->worlds[CURRENT] = (bool *)malloc(x * y * sizeof(bool));
-	g->worlds[OTHER] = (bool *)malloc(x * y * sizeof(bool));
-	if (!g->worlds[CURRENT] || !g->worlds[OTHER]) {
+	g->mem = (bool *)malloc(2 * size_x * size_y * sizeof(bool));
+	if (!g->mem) {
 		return 0;
 	}
 
-	g->size_x = x;
-	g->size_y = y;
-
+	g->size_x = size_x;
+	g->size_y = size_y;
+	g->worlds[CURRENT] = g->mem;
+	g->worlds[OTHER] = g->mem + size_x * size_y;
 	return 1;
 }
 
 void gol_free(struct gol *g)
 {
-	free(g->worlds[CURRENT]);
-	free(g->worlds[OTHER]);
+	free(g->mem);
 }
 
 void gol_init(struct gol *g)
@@ -50,7 +49,7 @@ void gol_print(struct gol *g)
 {
 	for ( int i = 0; i < g->size_x; i++ ) {
 		for ( int j = 0; j < g->size_y; j++ ) {
-			printf("%c ", get_cell(g, i, j) ? '#' : '.');
+			printf("%c ", get_cell(g, CURRENT, i, j) ? '#' : '.');
 		}
 		printf("\n");
 	}
@@ -65,7 +64,7 @@ void gol_step(struct gol *g)
         for (int j = 0; j < g->size_y; j++ ) {
 			count = count_neighbors(g, i, j);
 
-			if (get_cell(g, i, j)) {
+			if (get_cell(g, CURRENT, i, j)) {
 				b = (count == 3) || (count == 2);
 				set_cell(g, OTHER, i, j, b);
 			} else {
@@ -93,23 +92,23 @@ int count_neighbors(struct gol *g, int x, int y)
 	};
 
 	for ( int i = 0; i < 8; i++ ) {
-		count += get_cell(g, x + coords[i][0], y + coords[i][1]);
+		count += get_cell(g, CURRENT, x + coords[i][0], y + coords[i][1]);
 	}
 
 	return count;
 
 }
 
-bool get_cell(struct gol *g, int x, int y)
+bool get_cell(struct gol *g, enum world w, int x, int y)
 {
 
 	if((0 <= x) && (0 <= y) && (x < g->size_x) && (y < g->size_y)) {
-		return *( g->worlds[CURRENT] + x * g->size_y + y );
+		return GET_CELL(g, x, y);
 	} else {
 		return 0;
 	}
 }
 void set_cell(struct gol *g, enum world w, int x, int y, bool b)
 {
-	g->worlds[w][x * g->size_y + y] = b;
+	GET_CELL(g, x, y) = b;
 }
