@@ -6,26 +6,27 @@
 int main()
 {
 	int i = 0;
-	struct gol g;
+	struct gol *g;
+	g = gol_alloc(10, 15);
 
-	if (!gol_alloc(&g, 10, 15)) {
+	if (!g) {
 		printf("No se pudo reservar memoria para mundo\n");
 		return EXIT_FAILURE;
     }
 
-	gol_init(&g);
+	gol_init(g);
 
 	do {
 		printf("\033cIteration %d\n", i++);
 
-		gol_print(&g);
+		gol_print(g);
 
 		printf("\n\n");
-		gol_step(&g);
+		gol_step(g);
 
 	} while (getchar() != 'q');
 
-	gol_free(&g);
+	gol_free(g);
 
 	return EXIT_SUCCESS;
 }
