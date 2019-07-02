@@ -3,28 +3,43 @@
 #include <stdbool.h>
 #include "gol.h"
 
+#define GET_CELL(g, x, y) ( g->worlds[w][x * g->size_y + y] )
+
+struct gol
+{
+  bool *mem;
+  bool *worlds[2];
+  int size_x;
+  int size_y;
+};
+
 enum world { CURRENT, OTHER };
 
 static int count_neighbors(struct gol *g, int x, int y);
 static bool get_cell(struct gol *g, enum world w, int x, int y);
 static void set_cell(struct gol *g, enum world w, int x, int y, bool b);
 
-bool gol_alloc(struct gol *g, int size_x, int size_y) {
-	
+struct gol *gol_alloc(int size_x, int size_y) {
+
+	struct gol *g = (struct gol *)malloc(sizeof(struct gol));
+
 	g->mem = (bool *)malloc(2 * size_x * size_y * sizeof(bool));
-	if (!g->mem) {
-		return 0;
-	}
+
+	if ( !g || !g->mem ) {
+		printf("No se pudo reservar memoria para mundo\n");
+    }
 
 	g->size_x = size_x;
 	g->size_y = size_y;
 	g->worlds[CURRENT] = g->mem;
 	g->worlds[OTHER] = g->mem + size_x * size_y;
-	return 1;
+
+	return g;
 }
 
 void gol_free(struct gol *g)
 {
+	free(g);
 	free(g->mem);
 }
 
