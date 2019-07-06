@@ -25,12 +25,14 @@ struct gol *gol_alloc(int size_x, int size_y) {
 
 	if (!g) {
 		printf("No se pudo reservar memoria para mundo\n");
+		return NULL;
     }
 
 	g->mem = (bool *)malloc(2 * size_x * size_y * sizeof(bool));
 
 	if (!g->mem) {
 		printf("No se pudo reservar memoria para mundo\n");
+		return NULL;
     }
 
 	g->size_x = size_x;
