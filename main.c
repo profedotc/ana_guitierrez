@@ -10,20 +10,14 @@ static void print_usage() {
 	printf("-h, --height: Height of the world\n");
 }
 
+bool random = false;
+int rseed = 0;
 
-int main(int argc, char **argv)
-{	
-	int i = 0;
+int option_index = 0;
+int c;
 
-	int usage = false;
-	int width = 0;
-	int height = 0;
-	bool random = false;
-	int rseed = 0;
-
-	int option_index = 0;
-	int c;
-
+static bool parse_args(int argc, char *argv[], struct gol_options *gol_opt) {
+	
 	static struct option long_options [] =
 	{
 		{"usage" , no_argument , 0, 'u'},
@@ -37,15 +31,15 @@ int main(int argc, char **argv)
 		&option_index)) != -1) {
 		switch (c) {
 			case 'u':
-				usage = true;
+				gol_opt->usage = true;
 				print_usage();
 				exit(0);
 				break;
 			case 'w':
-				width = strtol(optarg, NULL, 0);
+				gol_opt->width = strtol(optarg, NULL, 0);
 				break;
 			case 'h':
-				height = strtol(optarg, NULL, 0);
+				gol_opt->height = strtol(optarg, NULL, 0);
 				break;
 			case 'r':
 				random = true;
@@ -53,7 +47,7 @@ int main(int argc, char **argv)
 					rseed = strtol(optarg, NULL, 0);
 				break;
 			case '?':
-				/* getopt_long imprime un mensaje de error*/
+                printf("\nOpción no reconocida %s \n", optarg);
 				break;
 			default:
 				printf("Error\n");
@@ -64,8 +58,27 @@ int main(int argc, char **argv)
 	for (int i = optind; i < argc; i++)
 		printf("Argumento desconocido: \"%s\"\n", argv[i]);
 
+	return 1;
+};
+
+int main(int argc, char *argv[])
+{	
+	int i = 0;
+
+	struct gol_options gol_opt;
+
+	if (!parse_args(argc, argv, &gol_opt)) {
+        print_usage(argv[0]);
+        return -1;
+    }
+    if (gol_opt.usage) {
+        print_usage(argv[0]);
+        return 0;
+    }
+
+	
 	struct gol *g;
-	g = gol_alloc(width, height);
+	g = gol_alloc(gol_opt.width, gol_opt.height);
 
 	if (!g) {
 		printf("No se pudo reservar memoria para mundo\n");
