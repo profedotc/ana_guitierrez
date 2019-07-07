@@ -7,6 +7,7 @@ struct gol_options {
     bool usage;
     int width;
     int height;
+    bool random;
 };
 
 enum gol_init_pattern { GOL_GLIDER, GOL_RANDOM };

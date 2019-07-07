@@ -68,9 +68,13 @@ void gol_init(struct gol *g, enum gol_init_pattern pattern)
 		set_cell(g, CURRENT, 2, 2, true);
         break;
     case GOL_RANDOM:
-        for (int i = 0; i < g->size_x; i++)
-            for (int j = 0; j < g->size_y; j++)
-                set_cell(g, CURRENT, i, j, rand()%2);
+        for (int i = 0; i < g->size_x; i++) {
+            for (int j = 0; j < g->size_y; j++) {
+				int random = rand()%2;
+				printf("%d\n", random);
+                set_cell(g, CURRENT, i, j, random);
+			}
+		}
         break;
     }
 

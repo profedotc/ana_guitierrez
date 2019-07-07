@@ -8,6 +8,7 @@ static void print_usage() {
 	printf("-u, --usage: Prints this help message\n");
 	printf("-w, --width: Width of the world\n");
 	printf("-h, --height: Height of the world\n");
+	printf("-r, --random: Introduce a number to randomly create a world or leave it blank\n");
 }
 
 bool random = false;
@@ -40,7 +41,7 @@ static bool parse_args(int argc, char *argv[], struct gol_options *gol_opt) {
 				gol_opt->height = strtol(optarg, NULL, 0);
 				break;
 			case 'r':
-				random = true;
+				gol_opt->random = true;
 				if (optarg)
 					rseed = strtol(optarg, NULL, 0);
 				break;
@@ -65,6 +66,7 @@ int main(int argc, char *argv[])
 
 	struct gol_options gol_opt;
 	gol_opt.usage = 0;
+	enum gol_init_pattern gol_pattern = GOL_GLIDER;
 
 	if (parse_args(argc, argv, &gol_opt) ==! 1) {
         print_usage();
@@ -74,6 +76,9 @@ int main(int argc, char *argv[])
         print_usage();
         return 0;
     }
+	if (gol_opt.random) {
+		gol_pattern = GOL_RANDOM;
+	}
 
 	
 	struct gol *g;
@@ -84,7 +89,7 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
     }
 
-	gol_init(g, GOL_GLIDER);
+	gol_init(g, gol_pattern);
 
 	do {
 		printf("\033cIteration %d\n", i++);
