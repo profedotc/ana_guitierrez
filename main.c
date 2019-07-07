@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
     }
 
-	gol_init(g);
+	gol_init(g, GOL_GLIDER);
 
 	do {
 		printf("\033cIteration %d\n", i++);
