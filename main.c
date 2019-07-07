@@ -32,7 +32,6 @@ static bool parse_args(int argc, char *argv[], struct gol_options *gol_opt) {
 		switch (c) {
 			case 'u':
 				gol_opt->usage = true;
-				print_usage();
 				break;
 			case 'w':
 				gol_opt->width = strtol(optarg, NULL, 0);
@@ -65,8 +64,7 @@ int main(int argc, char *argv[])
 	int i = 0;
 
 	struct gol_options gol_opt;
-
-	printf("%d\n", parse_args(argc, argv, &gol_opt));
+	gol_opt.usage = 0;
 
 	if (parse_args(argc, argv, &gol_opt) ==! 1) {
         print_usage();
