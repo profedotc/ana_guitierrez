@@ -4,6 +4,13 @@
 #include "gol.h"
 #include <getopt.h>
 
+static void print_usage() {
+	printf("-u, --usage: Prints this help message\n");
+	printf("-w, --width: Width of the world\n");
+	printf("-h, --height: Height of the world\n");
+}
+
+
 int main(int argc, char **argv)
 {	
 	int i = 0;
@@ -31,6 +38,8 @@ int main(int argc, char **argv)
 		switch (c) {
 			case 'u':
 				usage = true;
+				print_usage();
+				exit(0);
 				break;
 			case 'w':
 				width = strtol(optarg, NULL, 0);
@@ -52,19 +61,11 @@ int main(int argc, char **argv)
 		}
 	}
 
-	printf("usage = %s\n", usage? "TRUE" : "FALSE");
-	printf("width = %d\n", width); 
-	printf("heigth = %d\n", height);
-	printf("random = %s\n", random? "TRUE" : "FALSE");
-	printf("rseed = %d\n", rseed);
-
 	for (int i = optind; i < argc; i++)
 		printf("Argumento desconocido: \"%s\"\n", argv[i]);
 
-	exit(0);
-
 	struct gol *g;
-	g = gol_alloc(10, 15);
+	g = gol_alloc(width, height);
 
 	if (!g) {
 		printf("No se pudo reservar memoria para mundo\n");
