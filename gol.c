@@ -23,10 +23,16 @@ struct gol *gol_alloc(int size_x, int size_y) {
 
 	struct gol *g = (struct gol *)malloc(sizeof(struct gol));
 
+	if (!g) {
+		printf("No se pudo reservar memoria para mundo\n");
+		return NULL;
+    }
+
 	g->mem = (bool *)malloc(2 * size_x * size_y * sizeof(bool));
 
-	if ( !g || !g->mem ) {
+	if (!g->mem) {
 		printf("No se pudo reservar memoria para mundo\n");
+		return NULL;
     }
 
 	g->size_x = size_x;
@@ -43,20 +49,34 @@ void gol_free(struct gol *g)
 	free(g->mem);
 }
 
-void gol_init(struct gol *g)
+void gol_init(struct gol *g, enum gol_init_pattern pattern)
 {
+	
 	for ( int i = 0; i < g->size_x; i++) {
 		for ( int j = 0; j < g->size_y; j++) {
 			  set_cell(g, CURRENT, i, j, 0);
 		}
 	}
 
-	set_cell(g, CURRENT, 0, 1, true);
-	set_cell(g, CURRENT, 0, 2, false);
-	set_cell(g, CURRENT, 1, 2, true);
-	set_cell(g, CURRENT, 2, 0, true);
-	set_cell(g, CURRENT, 2, 1, true);
-	set_cell(g, CURRENT, 2, 2, true);
+	switch (pattern) {
+    case GOL_GLIDER:
+		set_cell(g, CURRENT, 0, 1, true);
+		set_cell(g, CURRENT, 0, 2, false);
+		set_cell(g, CURRENT, 1, 2, true);
+		set_cell(g, CURRENT, 2, 0, true);
+		set_cell(g, CURRENT, 2, 1, true);
+		set_cell(g, CURRENT, 2, 2, true);
+        break;
+    case GOL_RANDOM:
+        for (int i = 0; i < g->size_x; i++) {
+            for (int j = 0; j < g->size_y; j++) {
+				int random = rand()%2;
+				printf("%d\n", random);
+                set_cell(g, CURRENT, i, j, random);
+			}
+		}
+        break;
+    }
 
 }
 
