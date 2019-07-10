@@ -4,6 +4,16 @@
 #include "gol.h"
 #include <getopt.h>
 
+// parámetros que recibe el mundo
+struct gol_options {
+    bool usage;
+    int width;
+    int height;
+    bool random;
+    int rseed;
+};
+
+// imprime instrucciones sobre cómo usar nuestro programa
 static void print_usage() {
 	printf("-u, --usage: Prints this help message\n");
 	printf("-w, --width: Width of the world\n");
@@ -11,14 +21,14 @@ static void print_usage() {
 	printf("-r, --random: Introduce a number to randomly create a world or leave it blank\n");
 }
 
-bool random = false;
-int rseed = 0;
-
 int option_index = 0;
 int c;
-
+// parsea los parámetros introducidos por el usuario
 static bool parse_args(int argc, char *argv[], struct gol_options *gol_opt) {
 	
+	gol_opt->usage = 0;
+	gol_opt->random = 0;
+
 	static struct option long_options [] =
 	{
 		{"usage" , no_argument , 0, 'u'},
@@ -43,7 +53,7 @@ static bool parse_args(int argc, char *argv[], struct gol_options *gol_opt) {
 			case 'r':
 				gol_opt->random = true;
 				if (optarg)
-					rseed = strtol(optarg, NULL, 0);
+					gol_opt->rseed = strtol(optarg, NULL, 0);
 				break;
 			case '?':
                 printf("\nOpción no reconocida %s \n", optarg);
@@ -60,15 +70,15 @@ static bool parse_args(int argc, char *argv[], struct gol_options *gol_opt) {
 	return 1;
 };
 
+// función principal de nuestro programa
 int main(int argc, char *argv[])
 {	
 	int i = 0;
 
 	struct gol_options gol_opt;
-	gol_opt.usage = 0;
 	enum gol_init_pattern gol_pattern = GOL_GLIDER;
 
-	if (parse_args(argc, argv, &gol_opt) ==! 1) {
+	if (parse_args(argc, argv, &gol_opt) != 1) {
         print_usage();
         return -1;
     }
